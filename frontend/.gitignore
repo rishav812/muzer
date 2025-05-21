@@ -1,0 +1,79 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma
+prisma/.env
+prisma/migrations/*/migration.sql
+
+# IDE and editor folders
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+
+# output and cache
+*.log
+.cache/
+
+# Ignore public build artifacts (optional, if generated)
+public/*.map
+
+# Ignore local config
+*.local.js
+*.local.ts
+
+# Ignore backup files
+*~
+*.swp
+*.swo
+
+# Ignore compiled output (if any)
+dist/
+
+# Ignore package manager lock files (optional, if not committed)
+# package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore custom config
+components.json
