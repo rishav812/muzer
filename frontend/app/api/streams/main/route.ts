@@ -2,6 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prismaClient } from "../../../lib/db";
 
+interface VideoData {
+  id: string;
+  type: 'Youtube' | string; // if other types might be allowed, use string
+  active: boolean;
+  url: string;
+  extractedId: string;
+  title: string;
+  smallImg: string;
+  bigImg: string;
+  userId: string;
+  _count: {
+    upvotes: number;
+  };
+  upvotes: Array<Record<string, any>>; // or define a specific type if known
+}
+
 export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
   const user = await prismaClient.user.findFirst({
@@ -32,7 +48,7 @@ export const GET = async (req: NextRequest) => {
   console.log("streams", streams);
   return NextResponse.json(
     {
-      data: streams.map((stream) => ({
+      data: streams.map((stream:VideoData) => ({
         ...stream,
         votes: stream._count.upvotes,
         isVoted: stream.upvotes.length > 0,

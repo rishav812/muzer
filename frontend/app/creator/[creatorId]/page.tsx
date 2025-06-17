@@ -1,9 +1,9 @@
 import StreamView from "../../components/StreamView";
 
-const CreatorPage = ({ params: { creatorId } }: { params: { creatorId: string } }) => {
-  return (
-    <StreamView creatorId={creatorId}/>
-  );
+// Next.js expects the page function to be async and receive a context object with params and searchParams as Promise
+const CreatorPage = async ({ params }: { params: Promise<{ creatorId: string }> }) => {
+  const resolvedParams = await params;
+  return <StreamView creatorId={resolvedParams?.creatorId ?? ""} />;
 };
 
 export default CreatorPage;
