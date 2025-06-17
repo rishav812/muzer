@@ -9,7 +9,6 @@ const upvoteSchema = z.object({
 
 export const POST = async (req: NextRequest) => {
   const session = await getServerSession();
-  console.log("session=====", session);
   const userData = await prismaClient.user.findFirst({
     where: { email: session?.user?.email ?? "" },
   });
@@ -26,7 +25,9 @@ export const POST = async (req: NextRequest) => {
   try {
     const data = upvoteSchema.parse(await req.json());
     const { streamId } = data;
-    await prismaClient.upvote.create({
+    console.log("userId", userData.id);
+    console.log("streamId", streamId);
+    await prismaClient.upvote.create({ 
       data: {
         userId: userData.id,
         streamId: streamId,

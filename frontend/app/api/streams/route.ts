@@ -15,6 +15,7 @@ const cretaeStreamSchema = z.object({
 
 export const POST = async (req: NextRequest) => {
   try {
+    // console.log("req", await req.json());
     const data = cretaeStreamSchema.parse(await req.json());
     const { creatorId, url } = data;
     console.log("userId", creatorId);
@@ -27,10 +28,15 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid URL" }, { status: 400 });
     }
 
-    const extractedId = url.split("v=")[1]?.split("&")[0]; // safer split
+    const extractedId = url.split("v=")[1]?.split("&")[0];
     const result = await youtubesearchapi.GetVideoDetails(extractedId);
-    console.log("result", result);
-    console.log("result.thumbnail", result.thumbnail.thumbnails);
+    console.log("result=======", result);
+    if (!result || !result.thumbnail || !result.thumbnail.thumbnails) {
+      return NextResponse.json(
+        { message: "Could not fetch video details or thumbnails" },
+        { status: 400 }
+      );
+    }
     const thumbnails = result.thumbnail.thumbnails.sort(
       (a: { width: number }, b: { width: number }) =>
         a.width < b.width ? -1 : 1
@@ -43,7 +49,7 @@ export const POST = async (req: NextRequest) => {
         active: true,
         url,
         extractedId,
-        title: result.title ?? "No video title",
+        title: result?.title ?? "No video title",
         bigImg: thumbnails[thumbnails.length - 1].url ?? "",
         smallImg:
           thumbnails.length > 1
@@ -54,7 +60,11 @@ export const POST = async (req: NextRequest) => {
     });
 
     return NextResponse.json(
-      { message: "Stream created successfully", stream_id: stream.id },
+      {
+        message: "Stream created successfully",
+        stream_id: stream.id,
+        data: stream,
+      },
       { status: 200 }
     );
   } catch (err) {
@@ -68,23 +78,45 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
   const creatorId = req.nextUrl.searchParams.get("creatorId");
-  try {
-    const streams = await prismaClient.stream.findMany({
-      where: {
-        userId: creatorId ?? "",
-      },
-    });
-    return NextResponse.json(
-      {
-        data: streams,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log("error", error);
-    return NextResponse.json(
-      { message: "error while fetching strams" },
-      { status: 500 }
-    );
+
+  if (!creatorId) {
+    return NextResponse.json({ message: "unauthenticated" }, { status: 403 });
   }
+
+  const [streams, activeStream] = await Promise.all([
+    await prismaClient.stream.findMany({
+      where: {
+        userId: creatorId,
+      },
+      include: {
+        _count: {
+          select: {
+            upvotes: true,
+          },
+        },
+        upvotes: {
+          where: {
+            userId: creatorId,
+          },
+        },
+      },
+    }),
+    await prismaClient.currentStream.findFirst({
+      where: {
+        userId: creatorId,
+      },
+    }),
+  ]);
+  console.log("streams", streams);
+  return NextResponse.json(
+    {
+      data: streams.map((stream) => ({
+        ...stream,
+        votes: stream._count.upvotes,
+        isVoted: stream.upvotes.length > 0,
+      })),
+      activeStream,
+    },
+    { status: 200 }
+  );
 };

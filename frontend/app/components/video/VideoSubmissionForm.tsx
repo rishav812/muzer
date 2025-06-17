@@ -1,77 +1,83 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 interface VideoSubmissionFormProps {
-  onSubmit: (videoData: any) => void
+  onSubmit: (videoData: any) => void;
 }
 
-export default function VideoSubmissionForm({ onSubmit }: VideoSubmissionFormProps) {
-  const [url, setUrl] = useState("")
-  const [preview, setPreview] = useState<null | { id: string; title: string; thumbnail: string }>(null)
-  const [error, setError] = useState<string | null>(null)
+export default function VideoSubmissionForm({
+  onSubmit,
+}: VideoSubmissionFormProps) {
+  const [url, setUrl] = useState("");
+  const [preview, setPreview] = useState<null | {
+    id: string;
+    smallImg: string;
+  }>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Extract YouTube video ID from URL
   const extractVideoId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-    const match = url.match(regExp)
-    return match && match[2].length === 11 ? match[2] : null
-  }
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
 
   // Handle URL input change
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(e.target.value)
-    setError(null)
-    setPreview(null)
-  }
+    setUrl(e.target.value);
+    setError(null);
+    setPreview(null);
+  };
 
   // Preview the video
   const handlePreview = () => {
-    const videoId = extractVideoId(url)
+    const videoId = extractVideoId(url);
 
     if (!videoId) {
-      setError("Invalid YouTube URL. Please enter a valid YouTube video link.")
-      setPreview(null)
-      return
+      setError("Invalid YouTube URL. Please enter a valid YouTube video link.");
+      setPreview(null);
+      return;
     }
 
     // In a real application, you would fetch the video details from YouTube API
     // For this demo, we'll mock the response
     setPreview({
       id: videoId,
-      title: "YouTube Video Title", // This would come from the API
-      thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-    })
-    setError(null)
-  }
+      smallImg: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+    });
+    setError(null);
+  };
 
   // Submit the video to the queue
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!preview) {
-      handlePreview()
-      return
+      handlePreview();
+      return;
     }
 
     onSubmit({
       id: preview.id,
-      title: preview.title,
-      thumbnail: preview.thumbnail,
-      votes: 0,
-      submittedBy: "currentUser", // In a real app, this would be the logged-in user
-    })
+      url: url,
+    });
 
     // Reset form
-    setUrl("")
-    setPreview(null)
-  }
+    setUrl("");
+    setPreview(null);
+  };
+
+  console.log("Preview state:", preview);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,7 +100,10 @@ export default function VideoSubmissionForm({ onSubmit }: VideoSubmissionFormPro
       </div>
 
       {error && (
-        <Alert variant="destructive" className="bg-red-900/50 border-red-800 text-red-200">
+        <Alert
+          variant="destructive"
+          className="bg-red-900/50 border-red-800 text-red-200"
+        >
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -104,14 +113,19 @@ export default function VideoSubmissionForm({ onSubmit }: VideoSubmissionFormPro
         <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-800">
           <h3 className="font-medium mb-2 text-zinc-200">Video Preview</h3>
           <div className="flex gap-4 items-start">
-            <img
-              src={preview.thumbnail || "/placeholder.svg"}
+            <img  
+              src={preview.smallImg || "/placeholder.svg"}
               alt="Video thumbnail"
               className="w-32 h-24 object-cover rounded"
             />
             <div className="flex-1">
-              <p className="text-sm font-medium mb-2 text-zinc-300">{preview.title}</p>
-              <Button type="submit" className="bg-purple-700 hover:bg-purple-600 text-white">
+              {/* <p className="text-sm font-medium mb-2 text-zinc-300">
+                {preview.title}
+              </p> */}
+              <Button
+                type="submit"
+                className="bg-purple-700 hover:bg-purple-600 text-white"
+              >
                 Add to Queue
               </Button>
             </div>
@@ -119,5 +133,5 @@ export default function VideoSubmissionForm({ onSubmit }: VideoSubmissionFormPro
         </div>
       )}
     </form>
-  )
+  );
 }

@@ -8,9 +8,6 @@ export default function withAuth(Component: any) {
   return function IsAuth(props: any) {
     const { data: session, status } = useSession();
 
-    console.log("session", session);
-    console.log("status", status);
-
     useEffect(() => {
       if (status === "unauthenticated") {
         redirect("/");
@@ -19,7 +16,14 @@ export default function withAuth(Component: any) {
 
     // While session is loading, you can return a loader or null
     if (status === "loading") {
-      return <div>Loading...</div>; // or return null;
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-zinc-950">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <span className="text-zinc-300 text-lg font-semibold">Loading...</span>
+          </div>
+        </div>
+      );
     }
 
     return <Component {...props} />;
