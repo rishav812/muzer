@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+
+interface VideoData {
+  id: string;
+  url: string;
+}
 
 interface VideoSubmissionFormProps {
-  onSubmit: (videoData: any) => void;
+  onSubmit: (videoData: VideoData) => void;
 }
 
 export default function VideoSubmissionForm({
@@ -67,6 +70,7 @@ export default function VideoSubmissionForm({
       return;
     }
 
+    // Use the correct prop name for onSubmit
     onSubmit({
       id: preview.id,
       url: url,
@@ -113,7 +117,7 @@ export default function VideoSubmissionForm({
         <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-800">
           <h3 className="font-medium mb-2 text-zinc-200">Video Preview</h3>
           <div className="flex gap-4 items-start">
-            <img  
+            <img
               src={preview.smallImg || "/placeholder.svg"}
               alt="Video thumbnail"
               className="w-32 h-24 object-cover rounded"

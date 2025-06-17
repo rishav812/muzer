@@ -1,8 +1,4 @@
-import Image from "next/image";
-import { Music, Users, Radio, Headphones } from "lucide-react"
 import { Header } from "./components/AppBar";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { LandingPage } from "./components/LandingPage";
 
 export default function Home() {

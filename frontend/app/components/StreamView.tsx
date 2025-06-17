@@ -1,63 +1,21 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState, useEffect } from "react";
 import withAuth from "./isAuth";
 import { Button } from "@/components/ui/button";
 import { Header } from "./AppBar";
 import VideoPlayer from "./video/VideoPlayer";
 import VideoQueue from "./video/VideoQueue";
 import VideoSubmissionForm from "./video/VideoSubmissionForm";
-import { useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { url } from "inspector";
 import { Copy } from "lucide-react";
-import { set } from "zod/v4";
-
-// Mock data for the queue
-const initialQueue = [
-  {
-    id: "dQw4w9WgXcQ",
-    title: "Rick Astley - Never Gonna Give You Up",
-    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
-    votes: 15,
-    submittedBy: "user123",
-  },
-  {
-    id: "9bZkp7q19f0",
-    title: "PSY - GANGNAM STYLE",
-    thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg",
-    votes: 10,
-    submittedBy: "user456",
-  },
-  {
-    id: "JGwWNGJdvx8",
-    title: "Ed Sheeran - Shape of You",
-    thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/mqdefault.jpg",
-    votes: 8,
-    submittedBy: "user789",
-  },
-];
-
-type Video = {
-  id: string;
-  title: string;
-  type: string;
-  bigImg: string;
-  smallImg: string;
-  url: string;
-  extractedId?: string;
-  thumbnail: string;
-  votes: number;
-  isVoted: boolean;
-  submittedBy: string;
-}; 
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
 function StreamView({ creatorId }: { creatorId: string }) {
-  const [queue, setQueue] = useState<Video[]>([]);
+  const [queue, setQueue] = useState<any[]>([]);
   const [currentVideo, setCurrentVideo] = useState("dQw4w9WgXcQ");
   const [voted, setVoted] = useState<boolean>(false);
 
@@ -79,7 +37,7 @@ function StreamView({ creatorId }: { creatorId: string }) {
     fetchStreams();
     const interval = setInterval(() => {}, REFRESH_INTERVAL);
     return () => clearInterval(interval);
-  }, [voted,]);
+  }, [voted]);
 
   // Function to add a new video to the queue
   const addToQueue = async (videoData: { id: string; url: string }) => {

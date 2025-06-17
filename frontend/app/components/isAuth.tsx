@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-export default function withAuth(Component: any) {
-  return function IsAuth(props: any) {
+export default function withAuth<T extends {}>(Component: React.ComponentType<T>) {
+  return function IsAuth(props: T) {
     const { data: session, status } = useSession();
 
     useEffect(() => {

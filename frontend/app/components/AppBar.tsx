@@ -1,9 +1,8 @@
 "use client";
 import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Music, Users, Radio, Headphones } from "lucide-react";
+import { Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export const Header = () => {
   const session = useSession();

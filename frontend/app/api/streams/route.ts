@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { prismaClient } from "../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
-// @ts-ignore
+// @ts-expect-error
 import youtubesearchapi from "youtube-search-api";
 
 const YT_REGEX = new RegExp(
